@@ -16,16 +16,12 @@
 package certh.iti.mklab.music.charts.extraction.framework.httpUtils;
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriver.Options;
-import org.openqa.selenium.WebDriver.Timeouts;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
  *
@@ -33,24 +29,24 @@ import org.openqa.selenium.WebElement;
  */
 public class BrowserEmulator extends Fetcher {
 
-    public WebDriver driver;
+    public HtmlUnitDriver driver;
 
-    public BrowserEmulator(String baseURL, String relativeURL, String ChromeDriverPath)
+    public BrowserEmulator(String baseURL, String relativeURL)
             throws InterruptedException {
-        this.driver = Selenium.setUpChromeDriver(ChromeDriverPath);
-        this.driver.manage().timeouts().implicitlyWait(60L, TimeUnit.SECONDS);
+        this.driver = new HtmlUnitDriver();
+        driver.setJavascriptEnabled(true);
         this.driver.get(baseURL + relativeURL);
 
-        Thread.sleep(10000L);
+        Thread.sleep(3000L);
     }
 
-    public BrowserEmulator(String fullURL, String ChromeDriverPath)
+    public BrowserEmulator(String fullURL)
             throws InterruptedException {
-        this.driver = Selenium.setUpChromeDriver(ChromeDriverPath);
-        this.driver.manage().timeouts().implicitlyWait(60L, TimeUnit.SECONDS);
+        driver = new HtmlUnitDriver();
+        driver.setJavascriptEnabled(true);
         this.driver.get(fullURL);
 
-        Thread.sleep(5000L);
+        Thread.sleep(3000L);
     }
 
     public void clickEvent(String CSSSelector)
