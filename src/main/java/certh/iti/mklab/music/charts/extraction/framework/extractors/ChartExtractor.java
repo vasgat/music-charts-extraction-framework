@@ -61,7 +61,7 @@ public class ChartExtractor {
                 this.fetcher = new StaticHTMLFetcher(source);
                 this.html = this.fetcher.getHTMLDocument();
             } else {
-                this.fetcher = new BrowserEmulator(source, "");
+                this.fetcher = new BrowserEmulator(source);
                 this.html = this.fetcher.getHTMLDocument();
             }
         }
@@ -159,7 +159,7 @@ public class ChartExtractor {
             this.statsSelectors.put(name, cssSelector);
             return this;
         }
-
+        
         public Builder statsInfo(String name, String cssSelector, String attr) {
             this.statsSelectors.put(name, new Pair(cssSelector, attr));
             return this;
@@ -182,7 +182,7 @@ public class ChartExtractor {
                 String position = extract_content(row, this.entriesSelectors.get("position"));
 
                 HashMap<String, String> additionalInfo = new HashMap();
-                for (Map.Entry<String, String> entry : additionalInfo.entrySet()) {
+                for (Map.Entry<String, Object> entry : entriesSelectors.entrySet()) {
                     if (!entry.getKey().equals("title") && !entry.getKey().equals("artist") && !entry.getKey().equals("position")) {
                         String extracted_content = extract_content(row, entry.getValue());
                         if (!extracted_content.equals("")) {
