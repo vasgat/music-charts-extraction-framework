@@ -43,9 +43,21 @@ public class StaticHTMLFetcher
 
     public StaticHTMLFetcher(String fullURL)
             throws URISyntaxException, IOException {
-        this.connection = Jsoup.connect(new URI(fullURL).toASCIIString()).followRedirects(true).validateTLSCertificates(false).userAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3").timeout(60000).ignoreHttpErrors(true);
-        this.document = this.connection.get();
-        this.responseCode = this.connection.response().statusCode();
+        int counter = 0;
+        boolean failed = true;
+
+        while (failed && counter < 3) {
+            try {
+                this.connection = Jsoup.connect(new URI(fullURL).toASCIIString()).followRedirects(true).validateTLSCertificates(false).userAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3").timeout(60000).ignoreHttpErrors(true);
+                this.document = this.connection.get();
+                failed = false;
+                this.responseCode = this.connection.response().statusCode();
+            } catch (IOException ex) {
+                counter++;
+                System.out.println(ex.getMessage());
+                System.out.println("failed_url:" + fullURL);
+            }
+        }
     }
 
     public int getResponseCode() {
