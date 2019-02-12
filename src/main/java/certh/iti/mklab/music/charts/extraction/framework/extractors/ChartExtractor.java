@@ -21,18 +21,19 @@ import certh.iti.mklab.music.charts.extraction.framework.chartUtils.ChartEntryTy
 import certh.iti.mklab.music.charts.extraction.framework.httpUtils.BrowserEmulator;
 import certh.iti.mklab.music.charts.extraction.framework.httpUtils.Fetcher;
 import certh.iti.mklab.music.charts.extraction.framework.httpUtils.StaticHTMLFetcher;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javafx.util.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- *
  * @author vasgat
  */
 public class ChartExtractor {
@@ -40,13 +41,13 @@ public class ChartExtractor {
     public static class Builder {
 
         private String source;
+        private String chart_id;
         private String date;
         private String table_rows;
         private String chart_name;
         private ChartEntryType type;
         private String country;
         private HashMap<String, Object> entriesSelectors;
-        private HashMap<String, Object> statsSelectors;
         private Document html;
         private boolean isDynamic;
         private Fetcher fetcher;
@@ -55,7 +56,6 @@ public class ChartExtractor {
                 throws URISyntaxException, IOException, InterruptedException {
             this.source = source;
             this.entriesSelectors = new HashMap();
-            this.statsSelectors = new HashMap();
             this.isDynamic = dynamic;
             if (!dynamic) {
                 this.fetcher = new StaticHTMLFetcher(source);
@@ -72,6 +72,11 @@ public class ChartExtractor {
                 ((BrowserEmulator) this.fetcher).clickEvent(cssSelector);
                 this.html = this.fetcher.getHTMLDocument();
             }
+            return this;
+        }
+
+        public Builder chart_id(String chart_id) {
+            this.chart_id = chart_id;
             return this;
         }
 
@@ -155,22 +160,13 @@ public class ChartExtractor {
             return this;
         }
 
-        public Builder statsInfo(String name, String cssSelector) {
-            this.statsSelectors.put(name, cssSelector);
-            return this;
-        }
-        
-        public Builder statsInfo(String name, String cssSelector, String attr) {
-            this.statsSelectors.put(name, new Pair(cssSelector, attr));
-            return this;
-        }
-
         public Chart build()
                 throws UnsupportedEncodingException, URISyntaxException, IOException {
             if (this.isDynamic) {
                 ((BrowserEmulator) this.fetcher).close();
             }
             Chart chart = new Chart(this.source, this.chart_name, this.date, this.country, this.html);
+            chart.setType(this.type);
 
             Elements rows = this.html.select(this.table_rows);
             for (Element row : rows) {
@@ -183,28 +179,20 @@ public class ChartExtractor {
 
                 HashMap<String, String> additionalInfo = new HashMap();
                 for (Map.Entry<String, Object> entry : entriesSelectors.entrySet()) {
-                    if (!entry.getKey().equals("title") && !entry.getKey().equals("artist") && !entry.getKey().equals("position")) {
+                    if (!entry.getKey().equals("title") && !entry.getKey().equals("artist") && !entry.getKey().equals("chart_id") && !entry.getKey().equals("position")) {
                         String extracted_content = extract_content(row, entry.getValue());
                         if (!extracted_content.equals("")) {
-                            additionalInfo.put(entry.getKey(), extracted_content);
+                            additionalInfo.put(entry.getKey(), extracted_content.trim());
                         }
                     }
                 }
 
-                HashMap stats = new HashMap();
-                for (Map.Entry<String, Object> entry : this.statsSelectors.entrySet()) {
-                    String extracted_content = extract_content(row, entry.getValue());
-                    if (!extracted_content.equals("")) {
-                        ((HashMap) stats).put(entry.getKey(), extract_content(row, entry.getValue()));
-                    }
-                }
                 HashMap chart_entry = new ChartEntry.Builder()
-                        .title(title)
-                        .artist(artist)
-                        .position(position)
-                        .type(this.type)
+                        .chart_id(this.chart_id)
+                        .title(title.trim())
+                        .artist(artist.trim())
+                        .position(position.trim())
                         .additionalInfo(additionalInfo)
-                        .stats(stats)
                         .build();
 
                 chart.addChartEntry(chart_entry);
