@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- *
  * @author vasgat
  */
 public class Chart {
@@ -31,6 +30,7 @@ public class Chart {
     private String date;
     private org.bson.Document json;
     private String country;
+    private ChartEntryType type;
     private String source;
     public org.jsoup.nodes.Document html;
 
@@ -54,6 +54,10 @@ public class Chart {
     public String getSource() {
         return this.source;
     }
+
+    public ChartEntryType getType() { return this.type; }
+
+    public void setType(ChartEntryType type) {  this.type = type; }
 
     public String getCountry() {
         return this.country;
@@ -104,32 +108,29 @@ public class Chart {
     public org.bson.Document toJSON() {
         this.json = new org.bson.Document();
         this.json.append("name", this.name);
-        if (this.date.contains("-")) {
-            this.json.append("start_date", this.date.split(" - ")[0]);
-            this.json.append("end_date", this.date.split(" - ")[1]);
-        } else {
-            this.json.append("date", this.date);
-        }
         this.json.append("country", this.country);
         this.json.append("source", this.source);
+        if (this.type != null) {
+            this.json.append("type", this.type.toString());
+        }
 
         ArrayList<org.bson.Document> entries = new ArrayList();
         for (HashMap<String, Object> chartEntry : this.chartEntries) {
-            if (((!chartEntry.get("title").equals("")) && (!chartEntry.get("artist").equals(""))) || ((chartEntry.get("type").equals("artist")) && (!chartEntry.get("artist").equals(""))) || ((chartEntry.get("type").equals("video")) && (!chartEntry.get("title").equals("")))) {
+            if (((!chartEntry.get("title").equals("")) && (!chartEntry.get("artist").equals(""))) || (type.equals(ChartEntryType.ARTIST) && (!chartEntry.get("artist").equals(""))) || (type.equals(ChartEntryType.VIDEO) && (!chartEntry.get("title").equals("")))) {
                 org.bson.Document chart_entry = new org.bson.Document();
                 for (Map.Entry<String, Object> entry : chartEntry.entrySet()) {
-                    if (((String) entry.getKey()).equals("stats")) {
-                        org.bson.Document stats = new org.bson.Document();
-                        HashMap<String, Object> statistics = (HashMap) entry.getValue();
-                        if (statistics.size() > 0) {
-                            for (Map.Entry<String, Object> statistic : statistics.entrySet()) {
-                                stats.append((String) statistic.getKey(), statistic.getValue());
-                            }
-                            chart_entry.append("stats", stats);
-                        }
-                    } else if (!entry.getValue().equals("")) {
+                    if (entry.getValue() != null && !entry.getValue().equals("")) {
                         chart_entry.append((String) entry.getKey(), entry.getValue());
                     }
+
+                    if (this.date.contains("-")) {
+                        chart_entry.append("since", this.date.split(" - ")[0]);
+                        chart_entry.append("until", this.date.split(" - ")[1]);
+                    } else {
+                        chart_entry.append("since", this.date);
+                        chart_entry.append("until", this.date);
+                    }
+                    chart_entry.append("source", source);
                 }
                 entries.add(chart_entry);
             }
