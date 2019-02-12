@@ -37,6 +37,11 @@ public class ChartEntry {
             return this;
         }
 
+        public Builder chart_id(String chart_id) {
+            this.chart_entry.put("chart_id", chart_id);
+            return this;
+        }
+
         public Builder artist(String artist) {
             this.chart_entry.put("artist", artist);
             return this;
@@ -52,18 +57,8 @@ public class ChartEntry {
             return this;
         }
 
-        public Builder type(ChartEntryType type) {
-            this.chart_entry.put("type", type.value());
-            return this;
-        }
-
         public Builder source(String source) {
             this.chart_entry.put("source", source);
-            return this;
-        }
-
-        public Builder stats(HashMap statistics) {
-            this.chart_entry.put("stats", statistics);
             return this;
         }
 
