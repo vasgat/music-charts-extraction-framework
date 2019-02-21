@@ -190,6 +190,7 @@ public class ChartExtractor {
                         if (!extracted_content.equals("")) {
                             additionalInfo.put(entry.getKey(), extracted_content.trim());
                         }
+
                     }
                 }
 
@@ -197,7 +198,7 @@ public class ChartExtractor {
                         .chart_id(this.chart_id)
                         .title(title.trim())
                         .artist(artist.trim())
-                        .position(position.trim())
+                        .position(Integer.parseInt(position.trim()))
                         .additionalInfo(additionalInfo)
                         .build();
 
