@@ -47,6 +47,7 @@ public class ChartExtractor {
         private String chart_name;
         private ChartEntryType type;
         private String country;
+        private String chart_label;
         private HashMap<String, Object> entriesSelectors;
         private Document html;
         private boolean isDynamic;
@@ -82,6 +83,11 @@ public class ChartExtractor {
 
         public Builder custom_country(String country) {
             this.country = country;
+            return this;
+        }
+
+        public Builder chart_label(String label) {
+            this.chart_label = label;
             return this;
         }
 
@@ -165,7 +171,7 @@ public class ChartExtractor {
             if (this.isDynamic) {
                 ((BrowserEmulator) this.fetcher).close();
             }
-            Chart chart = new Chart(this.source, this.chart_name, this.date, this.country, this.html);
+            Chart chart = new Chart(this.source, this.chart_name, this.date, this.country, this.chart_label, this.html);
             chart.setType(this.type);
 
             Elements rows = this.html.select(this.table_rows);

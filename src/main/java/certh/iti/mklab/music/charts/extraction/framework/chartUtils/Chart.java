@@ -32,14 +32,16 @@ public class Chart {
     private String country;
     private ChartEntryType type;
     private String source;
+    private String label;
     public org.jsoup.nodes.Document html;
 
-    public Chart(String source, String name, String date, String country, org.jsoup.nodes.Document html) {
+    public Chart(String source, String name, String date, String country, String label, org.jsoup.nodes.Document html) {
         this.name = name;
         this.date = date;
         this.country = country;
         this.source = source;
         this.chartEntries = new ArrayList();
+        this.label = label;
         this.html = html;
     }
 
@@ -109,9 +111,12 @@ public class Chart {
         this.json = new org.bson.Document();
         this.json.append("name", this.name);
         this.json.append("country", this.country);
-        this.json.append("source", this.source);
+        this.json.append("link", this.source);
         if (this.type != null) {
             this.json.append("type", this.type.toString());
+        }
+        if (this.label != null) {
+            this.json.append("label", this.label);
         }
 
         ArrayList<org.bson.Document> entries = new ArrayList();
@@ -130,7 +135,12 @@ public class Chart {
                         chart_entry.append("since", this.date);
                         chart_entry.append("until", this.date);
                     }
-                    chart_entry.append("source", source);
+                    chart_entry.append("source", this.source);
+                    chart_entry.append("country", this.country);
+                    chart_entry.append("source", this.source);
+                    if (this.type != null) {
+                        chart_entry.append("type", this.type.toString());
+                    }
                 }
                 entries.add(chart_entry);
             }
