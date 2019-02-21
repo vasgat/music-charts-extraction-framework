@@ -113,7 +113,7 @@ public class Chart {
         this.json.append("country", this.country);
         this.json.append("link", this.source);
         if (this.type != null) {
-            this.json.append("type", this.type.toString());
+            this.json.append("type", this.type.value());
         }
         if (this.label != null) {
             this.json.append("label", this.label);
@@ -139,7 +139,7 @@ public class Chart {
                     chart_entry.append("country", this.country);
                     chart_entry.append("source", this.source);
                     if (this.type != null) {
-                        chart_entry.append("type", this.type.toString());
+                        chart_entry.append("type", this.type.value());
                     }
                 }
                 entries.add(chart_entry);

@@ -193,16 +193,27 @@ public class ChartExtractor {
 
                     }
                 }
+                try {
+                    HashMap chart_entry = new ChartEntry.Builder()
+                            .chart_id(this.chart_id)
+                            .title(title.trim())
+                            .artist(artist.trim())
+                            .position(Integer.parseInt(position.trim()))
+                            .additionalInfo(additionalInfo)
+                            .build();
+                    chart.addChartEntry(chart_entry);
+                } catch (NumberFormatException ex) {
+                    HashMap chart_entry = new ChartEntry.Builder()
+                            .chart_id(this.chart_id)
+                            .title(title.trim())
+                            .artist(artist.trim())
+                            .position(position.trim())
+                            .additionalInfo(additionalInfo)
+                            .build();
+                    chart.addChartEntry(chart_entry);
+                }
 
-                HashMap chart_entry = new ChartEntry.Builder()
-                        .chart_id(this.chart_id)
-                        .title(title.trim())
-                        .artist(artist.trim())
-                        .position(Integer.parseInt(position.trim()))
-                        .additionalInfo(additionalInfo)
-                        .build();
 
-                chart.addChartEntry(chart_entry);
             }
             return chart;
         }

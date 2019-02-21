@@ -47,7 +47,7 @@ public class ChartEntry {
             return this;
         }
 
-        public Builder position(Integer position) {
+        public Builder position(Object position) {
             this.chart_entry.put("position", position);
             return this;
         }

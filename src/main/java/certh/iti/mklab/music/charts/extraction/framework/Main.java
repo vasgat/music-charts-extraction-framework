@@ -8,6 +8,7 @@ package certh.iti.mklab.music.charts.extraction.framework;
 import certh.iti.mklab.music.charts.extraction.framework.chartUtils.Chart;
 import certh.iti.mklab.music.charts.extraction.framework.chartUtils.ChartEntryType;
 import certh.iti.mklab.music.charts.extraction.framework.extractors.ChartExtractor;
+import certh.iti.mklab.music.charts.extraction.framework.stringUtils.DateFormatter;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,23 +22,26 @@ public class Main {
     public static void main(String[] args)
             throws URISyntaxException, IOException, InterruptedException {
 
-        Chart kworb = new ChartExtractor.Builder("http://kworb.net/youtube/insights/se_daily.html", false)
-                .custom_country("global")
-                .chart_id("123456")
-                .type(ChartEntryType.VIDEO)
-                .chart_name("span.pagetitle")
-                .date("span.pagetitle")
-                .table_rows("#dailytable > tbody tr")
+        Chart ifpi_gr = new ChartExtractor.Builder("http://www.ifpi.gr/charts_el.html", false)
+                .chart_id("123")
+                .custom_country("GR")
+                .chart_label("ifpi_gr")
+                .type(ChartEntryType.ALBUM)
+                .date("#container > div.Object652 > div.Object648 > p:nth-child(5) > span")
+                .chart_name("div.Object648")
+                .table_rows("table.MsoNormalTable tbody tr")
                 .title("td:nth-child(3)")
                 .position("td:nth-child(1)")
-                .additionalInfo("streams_change", "td:nth-child(5)")
-                .additionalInfo("streams", "td:nth-child(4)")
+                .artist("td:nth-child(2)")
+                //.additionalInfo("label", "td:nth-child(4)")
                 .build();
 
-        String[] date = kworb.getDate().replaceAll(".* - ", "").replaceAll("\\|.*", "").trim().split("/");
-        kworb.setDate(date[2] + "/" + date[1] + "/" + date[0]);
-        kworb.setName(kworb.getName().replaceAll(" - .*", ""));
+        ifpi_gr.setName(ifpi_gr.getName().replaceAll("Εβδομάδα:.*", "").trim());
+        String week = ifpi_gr.getDate().replace("Εβδομάδα:", "").trim().split("/")[0];
+        String year = ifpi_gr.getDate().replace("Εβδομάδα:", "").trim().split("/")[1];
+        ifpi_gr.setDate(DateFormatter.transformWeekYearToDateSpan(week, year, 1));
+        ifpi_gr.getChartEntries().remove(0);
 
-        System.out.println(kworb.toJSON().toJson());
+        System.out.println(ifpi_gr.toJSON().toJson());
     }
 }
