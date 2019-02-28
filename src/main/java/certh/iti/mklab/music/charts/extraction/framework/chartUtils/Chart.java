@@ -57,9 +57,13 @@ public class Chart {
         return this.source;
     }
 
-    public ChartEntryType getType() { return this.type; }
+    public ChartEntryType getType() {
+        return this.type;
+    }
 
-    public void setType(ChartEntryType type) {  this.type = type; }
+    public void setType(ChartEntryType type) {
+        this.type = type;
+    }
 
     public String getCountry() {
         return this.country;
@@ -129,11 +133,14 @@ public class Chart {
                     }
 
                     if (this.date.contains("-")) {
-                        chart_entry.append("since", this.date.split(" - ")[0]);
-                        chart_entry.append("until", this.date.split(" - ")[1]);
+                        String[] datefields = this.date.split(" - ")[0].split("/");
+                        chart_entry.append("since", datefields[2] + "-" + datefields[1] + "-" + datefields[0]);
+                        datefields = this.date.split(" - ")[1].split("/");
+                        chart_entry.append("until", datefields[2] + "-" + datefields[1] + "-" + datefields[0]);
                     } else {
-                        chart_entry.append("since", this.date);
-                        chart_entry.append("until", this.date);
+                        String[] datefields = this.date.split("/");
+                        chart_entry.append("since", datefields[2] + "-" + datefields[1] + "-" + datefields[0]);
+                        chart_entry.append("until", datefields[2] + "-" + datefields[1] + "-" + datefields[0]);
                     }
                     chart_entry.append("source", this.source);
                     chart_entry.append("country", this.country);
