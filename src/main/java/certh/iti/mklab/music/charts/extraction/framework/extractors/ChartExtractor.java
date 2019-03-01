@@ -176,7 +176,10 @@ public class ChartExtractor {
 
             Elements rows = this.html.select(this.table_rows);
             for (Element row : rows) {
-                String title = extract_content(row, this.entriesSelectors.get("title"));
+                String title = "";
+                if (this.entriesSelectors.get("title") != null) {
+                    title = extract_content(row, this.entriesSelectors.get("title"));
+                }
                 String artist = "";
                 if (this.entriesSelectors.get("artist") != null) {
                     artist = extract_content(row, this.entriesSelectors.get("artist"));
